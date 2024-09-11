@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+    <xsl:template match="/">
+        <html>
+            <head>
+                <title>Personajes LEGO</title>
+            </head>
+            <body>
+                <h2>Listado de Personajes LEGO</h2>
+                <table border="1">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Universo</th>
+                        <th>Color Principal</th>
+                        <th>Categoría</th>
+                    </tr>
+                    <xsl:apply-templates select="legoPersonajes/personaje">
+                        <xsl:sort select="nombre" />
+                    </xsl:apply-templates>
+                </table>
+            </body>
+        </html>
+    </xsl:template>
+
+    <xsl:template match="personaje">
+        <tr>
+            <td>
+                <xsl:choose>
+                    <xsl:when test="categoria='Superhéroe'">
+                        <b><xsl:value-of select="nombre"/></b>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="nombre"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </td>
+            <td><xsl:value-of select="universo"/></td>
+            <td><xsl:value-of select="colorPrincipal"/></td>
+            <td>
+                <xsl:if test="categoria='Superhéroe' or categoria='Villano'">
+                    <xsl:value-of select="categoria"/>
+                </xsl:if>
+                <xsl:if test="categoria!='Superhéroe' and categoria!='Villano'">
+                    <xsl:text>Otros</xsl:text>
+                </xsl:if>
+            </td>
+        </tr>
+    </xsl:template>
+</xsl:stylesheet>
