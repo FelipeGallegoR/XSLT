@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0"
+xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+  <xsl:key name="busquedaEstado" match="enemigo" use="estado"/>
+
+  <xsl:template match="/">
+    <html>
+      <body>
+        <xsl:call-template name="tablaGeneral"/>
+        <xsl:call-template name="tablaMasPeligrosos"/>
+        <xsl:call-template name="estadisticas"/>
+      </body>
+    </html>
+  </xsl:template>
+
+  <xsl:template name="tablaGeneral">
+    <table>
+        <tr bgcolor="#510273" style="color:#fff">
+        <th>Nombre</th>
+        <th>Poder</th>
+        <th>Peligro</th>
+        <th>Ubicacion</th>
+        <th>Estado</th>
+      </tr>
+        <xsl:for-each select="key('busquedaEstado','Fugitivo')">
+          <xsl:sort select="peligro" order="descending"/>
+        <tr>
+          <td><xsl:value-of select="nombre"/></td>
+          <xsl:choose>
+            <xsl:when test="poder='mental'">
+              <td style="color: #f00"><xsl:value-of select="poder"/></td>
+            </xsl:when>
+            <xsl:when test="poder='fisico'">
+              <td style="color: #00f"><xsl:value-of select="poder"/></td>
+            </xsl:when>
+            <xsl:when test="poder='energia'">
+              <td style="color: #0f0"><xsl:value-of select="poder"/></td>
+            </xsl:when>
+            <xsl:otherwise>
+              <td><xsl:value-of select="poder"/></td>
+            </xsl:otherwise>
+          </xsl:choose>
+          <td><xsl:value-of select="peligro"/></td>
+          <td><xsl:value-of select="ubicacion"/></td>
+          <td><xsl:value-of select="estado"/></td>
+        </tr>
+      </xsl:for-each>
+    </table>
+  </xsl:template>
+
+  <xsl:template name="tablaMasPeligrosos">
+    <table>
+        <tr bgcolor="#510273" style="color:#fff">
+        <th>Nombre</th>
+        <th>Poder</th>
+        <th>Peligro</th>
+      </tr>
+        <xsl:for-each select="key('busquedaEstado','Fugitivo')">
+          <xsl:sort select="peligro" order="descending"/>
+        <xsl:if test="position() &lt;= 3">
+          <tr>
+            <td><xsl:value-of select="nombre"/></td>
+            <td><xsl:value-of select="poder"/></td>
+            <td><xsl:value-of select="peligro"/></td>
+          </tr>
+        </xsl:if>
+      </xsl:for-each>
+    </table>
+  </xsl:template>
+
+  <xsl:template name="estadisticas">
+    <p>Total enemigos: <xsl:value-of select="count(enemigos/enemigo)"/></p>
+    <p>Se escaparon: 
+      <xsl:value-of select="count(enemigos/enemigo[estado='Fugitivo'])"/>
+    </p>
+    <p>Porcentaje escapados: 
+      <xsl:value-of select="format-number(count(enemigos/enemigo[estado='Fugitivo']) div count(enemigos/enemigo) * 100, '0.00')"/>%
+    </p>
+  </xsl:template>
+
+</xsl:stylesheet>
